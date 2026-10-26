@@ -1,3 +1,101 @@
+# Network Status
+
+A lightweight Windows app that monitors network connectivity and local VPN services, displays your local IP, and alerts you to disconnections. Ideal for people who work with a VPN for extended periods.
+
+Built with C# and WinForms. No cloud services or third-party NuGet dependencies required.
+
+## Features
+
+- Network status monitoring using Windows connectivity information.
+- Local VPN monitoring through proxy processes, listening ports, or a selected VPN adapter.
+- Local IP address and network adapter display.
+- Alerts after two consecutive failed checks.
+- Adjustable check interval and alert cooldown.
+- System tray support and optional startup after sign-in.
+- Light/dark themes and English/Chinese interface.
+
+## Getting Started
+
+Requires Windows 10 or 11 with .NET Framework 4.8.
+
+1. Extract the portable package.
+2. Run `网络状态.exe`.
+3. Open **Settings** to configure monitoring.
+
+Default settings:
+
+| Setting | Default |
+|---|---|
+| Check interval | 10 seconds |
+| Alert cooldown | 5 minutes |
+| Local proxy port | 7897 |
+| Start at sign-in | Disabled |
+
+Use **Detect** in Settings to identify a running local proxy, or enter its port manually.
+
+## Alerts and Closing
+
+- **Click elsewhere on the screen:** dismiss the alert and start the cooldown. Monitoring continues.
+- **Click “Stop and exit” or the alert’s ×:** stop monitoring and exit the application.
+- **Click the main window’s ×:** hide the application to the system tray. Monitoring continues.
+- **Double-click the tray icon:** reopen the main window.
+- **Select Exit from the tray menu:** close the application completely.
+
+If the connection is still unavailable after the cooldown, another alert will appear on a subsequent check.
+
+**Test alert** follows the same dismissal and exit rules.
+
+## Monitoring Scope
+
+The app checks Windows network status and local VPN services without sending external probes. It displays your local LAN IP address; remote VPN server availability is not checked.
+
+## Appearance
+
+Use the two small buttons in the bottom-right corner:
+
+- **◐:** switch between light and dark themes.
+- **EN / 中:** switch between English and Chinese.
+
+Your preferences are saved automatically.
+
+## Settings and Startup
+
+Settings are stored locally:
+
+```text
+%LOCALAPPDATA%\NetWatch\settings.json
+```
+
+Startup is disabled by default. When enabled, the app starts quietly in the tray after sign-in and waits for Windows to report an Internet connection before monitoring.
+
+If you move the executable, disable and re-enable the startup option to update its path.
+
+## Screen Click Handling
+
+Screen-wide mouse click detection is active only while an alert is displayed and is removed when the alert closes. Click positions are not recorded or uploaded, and clicks continue to reach their original target.
+
+## Build from Source
+
+Run the following command in PowerShell from the repository root:
+
+```powershell
+.\build.ps1
+```
+
+The script uses the Windows .NET Framework C# compiler and produces `NetWatch.exe`. No dependency downloads are required.
+
+## Project Structure
+
+- `src/Core.cs` — network checks, IP selection, cooldown logic, and settings.
+- `src/Program.cs` — interface, alerts, system tray, and screen click handling.
+- `src/Appearance.cs` — interface translations.
+- `tests/` — monitoring, IP, appearance, layout, and lifecycle tests.
+
+## License
+
+See [LICENSE](LICENSE) for licensing information.
+
+---
 # 网络状态 / Network Status
 
 轻量 Windows 本地网络与 VPN 状态提醒工具。使用 C#、WinForms 和 .NET Framework 4.8，无需云服务或第三方 NuGet 依赖。
@@ -14,9 +112,7 @@
 
 ## 检测范围
 
-程序不主动向外部网站发送探测或公网 IP 查询。Windows 网络状态来自系统的现有判断；系统自身可能执行网络连通性检测。
-本地代理端口仍正常时，无法判断远端代理节点是否可用。网卡 Up 也不保证远端连接正常。
-IP 显示的是活动 LAN 接口地址，不是 VPN 公网出口。默认代理端口 7897，可在设置里修改或自动识别。
+本工具通过 Windows 网络状态和本地代理服务检测掉线，无需外部探测。显示本机局域网 IP；VPN 远端节点的可用性暂不检测。代理端口可在设置中修改或自动识别。
 
 ## 离线构建
 
